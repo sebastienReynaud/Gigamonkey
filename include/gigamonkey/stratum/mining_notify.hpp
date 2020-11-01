@@ -151,7 +151,7 @@ namespace Gigamonkey::Stratum {
             Version{v}, Worker{w}, Notify{n} {}
         job(job_id i, const work::puzzle& puzzle, const worker& w, Bitcoin::timestamp now, bool clean) : 
             Version{puzzle.Category}, Worker{w}, 
-            Notify{i, puzzle.Digest, puzzle.Header, puzzle.Body, puzzle.Path.Hashes, puzzle.Target, now, clean} {}
+            Notify{i, puzzle.Digest, puzzle.Header, puzzle.Body, puzzle.Path.Digests, puzzle.Target, now, clean} {}
         
         bool valid() const {
             return Notify.valid();
