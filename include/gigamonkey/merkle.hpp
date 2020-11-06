@@ -17,16 +17,24 @@ namespace Gigamonkey::Merkle {
     
     digest256 root(leaf_digests l);
     
+    using entry = data::entry<uint32, stack<digest256>>;
+    
+    using digests = stack<digest256>;
+    
     struct path {
         uint32 Index;
-        list<digest256> Digests;
+        digests Digests;
         
         path();
-        path(uint32 i, list<digest256> p);
+        path(uint32 i, digests p);
         
         bool valid() const;
         
         digest256 derive_root(const digest256& leaf) const;
+        
+        operator entry() const {
+            return entry{Index, Digests};
+        }
     };
     
     struct leaf {
@@ -35,18 +43,18 @@ namespace Gigamonkey::Merkle {
         
         leaf();
         leaf(digest256 d, uint32 i);
-        leaf(digest256 d) : leaf(d, 0) {}
+        explicit leaf(digest256 d) : leaf(d, 0) {}
         
         bool valid() const;
     };
     
     struct branch {
         leaf Leaf;
-        list<digest256> Digests;
+        digests Digests;
         
         branch();
         branch(leaf);
-        branch(leaf, list<digest256>);
+        branch(leaf, digests);
         branch(const digest256& d, path p) : branch{leaf{d, p.Index}, p.Digests} {}
         
         bool valid() const;
@@ -58,16 +66,12 @@ namespace Gigamonkey::Merkle {
         operator leaf() const;
         
         operator path() const {
-            return path{Leaf.Index, Digests};
+            return path{Leaf.Index, Digests << Leaf.Digest};
         }
         
         branch rest() const;
         
         digest256 root() const;
-        
-        operator data::entry<uint32, list<digest256>>() const {
-            return data::entry<uint32, list<digest256>>{Leaf.Index, Digests << Leaf.Digest};
-        }
     };
     
     inline digest256 path::derive_root(const digest256& leaf) const {
@@ -79,7 +83,7 @@ namespace Gigamonkey::Merkle {
         digest256 Root;
     
         proof();
-        proof(const digest256& root);
+        explicit proof(const digest256& root);
         proof(branch p, const digest256& root);
         
         bool valid() const;
@@ -89,11 +93,8 @@ namespace Gigamonkey::Merkle {
         return p.Root;
     }
     
-    // efficiently check that all paths have the same root.
-    // return that root if they do. returned root hash will
-    // be an invalid value if not all paths are valid
-    // and have the same root. 
-    bool check_proofs(list<proof>);
+    struct dual;
+    class server;
     
     struct tree : data::tree<digest256> {
         uint32 Width;
@@ -102,8 +103,8 @@ namespace Gigamonkey::Merkle {
         static tree make(leaf_digests);
         
         tree();
-        tree(const digest256& root);
-        tree(leaf_digests h) : tree{make(h)} {}
+        explicit tree(const digest256& root);
+        explicit tree(leaf_digests h) : tree{make(h)} {}
         
         bool valid() const;
         
@@ -111,38 +112,34 @@ namespace Gigamonkey::Merkle {
         
         proof operator[](uint32 i) const;
         
+        operator dual() const;
+        
     private:
-        tree(data::tree<digest256> t) : data::tree<digest256>{t} {}
+        tree(data::tree<digest256> t, uint32 w, uint32 h) : data::tree<digest256>{t}, Width{w}, Height{h} {}
+        friend class server;
     };
     
     inline digest256 root(const tree t) {
         return t.root();
     }
     
+    using map = data::map<uint32, digests>;
+    
     // dual to the Merkle tree. Prunable. 
     // would be good in a wallet. 
-    class dual {
-        map<uint32, list<digest256>> Paths;
-        
-        dual insert(const branch&) const;
-        
-    public:
+    struct dual {
+        map Paths;
         digest256 Root;
-        uint32 Width;
-        uint32 Height;
         
-        dual() : Paths{}, Root{}, Width{0}, Height{0} {}
-        dual(map<uint32, list<digest256>> m, digest256 root) : Paths{m}, Root{root} {}
-        dual(digest256 root) : dual{{}, root} {}
+        dual() : Paths{}, Root{} {}
+        dual(map m, digest256 root) : Paths{m}, Root{root} {}
+        explicit dual(digest256 root) : dual{{}, root} {}
         
-        dual(const proof& b);
+        dual(const proof& p) : Paths{entry(path(p.Branch))}, Root{p.Root} {}
+        
         dual(const tree& t);
         
-        list<proof> proofs() const;
-        
-        bool valid() const {
-            return Root.valid() && Paths.valid() && check_proofs(proofs());
-        }
+        bool valid() const;
         
         bool contains(uint32) const;
         
@@ -153,11 +150,12 @@ namespace Gigamonkey::Merkle {
         }
         
         list<leaf> leaves() const;
+        list<proof> proofs() const;
         
         dual operator+(const dual& d) const;
         
         bool operator==(const dual& d) const {
-            return Width == d.Width && Height == d.Height && Root == d.Root && Paths == d.Paths;
+            return Root == d.Root && Paths == d.Paths;
         }
     };
     
@@ -178,23 +176,29 @@ namespace Gigamonkey::Merkle {
         server(leaf_digests);
         server(const tree&);
         
-        bool valid() const;
-        
         operator tree() const;
-        
-        operator dual() const;
         
         digest256 root() const;
         
         proof operator[](uint32 index) const;
         
-        bool operator==(const server& s) const {
-            return Width == s.Width && Height == s.Height && Digests == s.Digests;
-        }
+        bool operator==(const server& s) const;
     };
     
     inline std::ostream& operator<<(std::ostream& o, const path& p) {
         return o << "path{" << p.Index << ", " << p.Digests << "}";
+    }
+    
+    inline std::ostream& operator<<(std::ostream& o, const leaf& p) {
+        return o << "leaf{" << p.Index << ", " << p.Digest << "}";
+    }
+    
+    inline std::ostream& operator<<(std::ostream& o, const branch& b) {
+        return o << "branch{" << b.Leaf << ", " << b.Digests << "}";
+    }
+    
+    inline std::ostream& operator<<(std::ostream& o, const proof& p) {
+        return o << "proof{" << p.Branch << ", " << p.Root << "}";
     }
     
     inline bool operator==(const path& a, const path& b) {
@@ -209,6 +213,16 @@ namespace Gigamonkey::Merkle {
         return a.Digest != b.Digest || a.Index != b.Index;
     }
     
+    inline bool operator<(const leaf& a, const leaf& b) {
+        if (a.Digest == b.Digest) return a.Index < b.Index;
+        return a.Digest < b.Digest;
+    }
+    
+    inline bool operator>(const leaf& a, const leaf& b) {
+        if (a.Digest == b.Digest) return a.Index > b.Index;
+        return a.Digest > b.Digest;
+    }
+    
     inline bool operator==(const branch& a, const branch& b) {
         return a.Leaf == b.Leaf && a.Digests == b.Digests;
     }
@@ -217,13 +231,17 @@ namespace Gigamonkey::Merkle {
         return a.Root == b.Root && a.Branch == b.Branch;
     }
     
+    inline bool operator!=(const proof& a, const proof& b) {
+        return a.Root != b.Root || a.Branch != b.Branch;
+    }
+    
     inline bool operator==(const tree& a, const tree& b) {
         return a.Width == b.Width && a.Height == b.Height && static_cast<data::tree<digest256>>(a) == static_cast<data::tree<digest256>>(b);
     }
     
     inline path::path() : Index{0}, Digests{} {}
     
-    inline path::path(uint32 i, list<digest256> p) : Index{i}, Digests{} {}
+    inline path::path(uint32 i, stack<digest256> p) : Index{i}, Digests{} {}
         
     inline bool path::valid() const {
         return Digests.valid();
@@ -239,7 +257,7 @@ namespace Gigamonkey::Merkle {
     
     inline branch::branch(): Leaf{}, Digests{} {}
     
-    inline branch::branch(leaf l, list<digest256> p) : Leaf{l}, Digests{p} {}
+    inline branch::branch(leaf l, digests p) : Leaf{l}, Digests{p} {}
     
     inline branch::branch(leaf l) : Leaf{l}, Digests{} {}
         
@@ -263,22 +281,22 @@ namespace Gigamonkey::Merkle {
     
     inline proof::proof(branch p, const digest256& root) : Branch{p}, Root{root} {}
     
-    inline proof::proof(const digest256& root) : Branch{}, Root{root} {}
+    inline proof::proof(const digest256& root) : Branch{leaf{root, 0}}, Root{root} {}
     
     inline bool proof::valid() const {
-        return Branch.valid() && Root == Branch.root();
+        return Root.valid() && Branch.valid() && Root == Branch.root();
     }
     
     inline tree::tree() : data::tree<digest256>{}, Width{0}, Height{0} {}
     
     inline tree::tree(const digest256& root) : data::tree<digest256>{root}, Width{1}, Height{1} {}
     
-    inline server::operator dual() const {
-        return dual{operator tree()};
-    }
-    
     inline digest256 server::root() const {
         return Digests[Digests.size() - 1];
+    }
+        
+    inline bool server::operator==(const server& s) const {
+        return Width == s.Width && Height == s.Height && Digests == s.Digests;
     }
 }
 

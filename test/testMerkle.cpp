@@ -6,9 +6,14 @@
 
 namespace Gigamonkey::Merkle {
     
+    list<proof> get_server_proofs(const server& x) {
+        list<proof> p;
+        for(uint32 i = 0; i < x.Width; i++) p = p << x[i];
+        return p;
+    }
+    
     TEST(MerkleTest, TestMerkle) {
         EXPECT_FALSE(leaf{}.valid());
-        EXPECT_FALSE(path{}.valid());
         EXPECT_FALSE(proof{}.valid());
         EXPECT_FALSE(tree{}.valid());
         EXPECT_FALSE(dual{}.valid());
@@ -26,28 +31,39 @@ namespace Gigamonkey::Merkle {
             
             tree Tree{l};
             
+            std::cout << "tree of size " << i << " constructed." << std::endl;
+            
             EXPECT_TRUE(Tree.valid());
             
             // check that the root function will calculate the same value as the tree root. 
             EXPECT_EQ(Tree.root(), root(l));
             
+            list<proof> tree_proofs = Tree.proofs();
+            
+            EXPECT_TRUE(tree_proofs.valid());
+            
             // construct the dual tree from the tree. 
             dual Dual{Tree};
+            
+            list<proof> dual_proofs = Dual.proofs();
+            
+            EXPECT_EQ(tree_proofs, dual_proofs);
             
             EXPECT_TRUE(Dual.valid());
             
             server Server{l};
             
-            EXPECT_TRUE(Dual.valid());
+            list<proof> server_proofs = get_server_proofs(Server);
             
-            EXPECT_EQ(server(Tree), Server);
+            EXPECT_EQ(tree_proofs, server_proofs);
             
             EXPECT_EQ(Tree, tree(Server));
             
-            EXPECT_EQ(Dual, dual(Server));
+            EXPECT_EQ(server(Tree), Server);
+            
+            std::cout << "Server works" << std::endl;
             
             dual ReconstructedLeft{};
-            dual ReconstructedRight{};
             
             for (uint32 j = 0; j < i; j++) {
                 proof p = Dual[j];
@@ -58,12 +74,17 @@ namespace Gigamonkey::Merkle {
                 ReconstructedLeft = ReconstructedLeft + p;
                 
                 EXPECT_TRUE(ReconstructedLeft[i].valid());
-        
+                
                 EXPECT_TRUE(p.valid());
+                EXPECT_TRUE(q.valid());
                 EXPECT_EQ(p, q);
                 p.Root = fail;
                 EXPECT_FALSE(p.valid());
             }
+            
+            EXPECT_EQ(Dual, ReconstructedLeft);
+            
+            dual ReconstructedRight{};
             
             uint32 j = i;
             while (j > 0) {
@@ -78,11 +99,12 @@ namespace Gigamonkey::Merkle {
                 EXPECT_TRUE(ReconstructedRight[i].valid());
             }
             
-            EXPECT_EQ(Dual, ReconstructedLeft);
             EXPECT_EQ(Dual, ReconstructedRight);
             
             Dual.Root = fail;
             EXPECT_FALSE(Dual.valid());
+            
+            std::cout << "merkle test round " << i << " completed." << std::endl;
         }
     }
 }
