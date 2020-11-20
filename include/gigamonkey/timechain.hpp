@@ -167,8 +167,8 @@ namespace Gigamonkey::Bitcoin {
         bool valid() const;
         
         input() : Outpoint{}, Script{}, Sequence{} {}
-        input(const outpoint&, const Gigamonkey::script&, const uint32_little&);
-        input(const outpoint&, const Gigamonkey::script&);
+        input(const outpoint& o, const Gigamonkey::script& x, const uint32_little& z = 0xffffffff) : 
+            Outpoint{o}, Script{x}, Sequence{z} {} 
         
         size_t serialized_size() const;
     };

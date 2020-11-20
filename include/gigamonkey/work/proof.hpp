@@ -52,7 +52,7 @@ namespace Gigamonkey::work {
     };
     
     // puzzle corresponds to the point where the coinbase has been constructed, other than the extra nonces.
-    struct puzzle final {
+    struct puzzle {
         candidate Candidate;
         
         // corresponds to the first part of the coinbase tx. 

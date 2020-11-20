@@ -134,6 +134,7 @@ add_library(gigamonkey STATIC
     #src/gigamonkey/spv.cpp
     src/gigamonkey/rpc/getminingcandidate.cpp
     src/gigamonkey/timechain.cpp
+    src/gigamonkey/coinbase.cpp
     src/gigamonkey/work.cpp
     src/gigamonkey/redeem.cpp
     src/gigamonkey/schema/hd.cpp

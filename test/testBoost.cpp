@@ -12,7 +12,7 @@ struct scripts {
     data::bytes input_script;
     data::bytes output_script;
 };
-    
+
 std::ostream& operator<<(std::ostream& o, scripts x) {
     return o << "{InputScript: " << x.input_script << ", OutputScript: " << x.output_script << "}";
 }

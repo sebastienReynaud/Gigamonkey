@@ -37,6 +37,10 @@ namespace Gigamonkey::Stratum {
         return true;
     }
     
+    inline bytes_writer operator<<(bytes_writer o, const session_id id) {
+        return o << static_cast<uint32_big>(id);
+    }
+    
     inline std::ostream& operator<<(std::ostream& o, const session_id id) {
         return o << data::encoding::hex::fixed<4>(id);
     }
