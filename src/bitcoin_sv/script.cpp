@@ -9,7 +9,7 @@
 #include "policy/policy.h"
 
 // not in use but required by config.h dependency
-bool fRequireStandard = true;
+bool fRequireStandard = false;
 
 namespace Gigamonkey::Bitcoin {
     

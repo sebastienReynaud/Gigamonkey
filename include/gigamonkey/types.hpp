@@ -81,4 +81,7 @@ namespace Gigamonkey {
 
 }
 
+// not in use but required by config.h dependency
+extern bool fRequireStandard;
+
 #endif
