@@ -5,13 +5,15 @@
 #define GIGAMONKEY_COINBASE
 
 #include <gigamonkey/timechain.hpp>
+#include <gigamonkey/signature.hpp>
 #include <gigamonkey/address.hpp>
+#include <gigamonkey/script/script.hpp>
 #include <gigamonkey/stratum/session_id.hpp>
 #include <gigamonkey/rpc/getminingcandidate.hpp>
 #include <gigamonkey/rpc/submitminingsolution.hpp>
 #include <gigamonkey/work/proof.hpp>
 
-namespace Gigamonkey::Bitcoin::mining {
+namespace Gigamonkey::Bitcoin {
     
     struct coinbase : transaction {
         bool bip44(int32 height) const;
@@ -76,6 +78,47 @@ namespace Gigamonkey::Bitcoin::mining {
                 p.IncompleteCoinbase.complete(x.ExtraNonce1, x.Share.ExtraNonce2), 
                 x.Share.Timestamp, 
                 work::proof::Puzzle.Candidate.Category} {}
+    };
+    
+    struct miner_id {
+        struct static_document;
+        void to_json(json&, const static_document&);
+        bool from_json(const json&, static_document&);
+        
+        struct static_document {
+            string version;
+            int height;
+            pubkey prevMinerId;
+            signature prevMinerIdSig;
+            pubkey minerId;
+            optional<pubkey> dynamicMinerId;
+            outpoint vctx;
+            optional<json> minerContact;
+            optional<json> extensions;
+            
+            bool valid() const {
+                return version != "" && height != 0 && prevMinerId.valid() && minerId.valid() && (!bool(dynamicMinerId) || dynamicMinerId->valid());
+            }
+            
+            bytes write() const;
+            
+            static_document() = default;
+        };
+        
+        static_document StaticDocument;
+        signature StaticDocumentSignature;
+        optional<bytes> DynamicDocument;
+        optional<signature> DynamicDocumentSignature;
+        
+        miner_id();
+        miner_id(const static_document&, const signature&);
+        miner_id(const static_document&, const signature&, const bytes&, const signature&);
+        
+        bool valid() const;
+        
+        bytes write() const;
+        
+        static miner_id read(bytes_view b);
     };
     
     bool inline coinbase::valid() const {
