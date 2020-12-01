@@ -2,6 +2,7 @@
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
 #include <gigamonkey/merkle.hpp>
+#include "validation.h"
 #include "gtest/gtest.h"
 
 namespace Gigamonkey::Merkle {
