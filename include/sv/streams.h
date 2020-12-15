@@ -3,11 +3,11 @@
 // Copyright (c) 2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_STREAMS_H
-#define BSV_STREAMS_H
+#ifndef BITCOIN_STREAMS_H
+#define BITCOIN_STREAMS_H
 
 #include <sv/serialize.h>
-#include <sv/support/allocators/zeroafterfree.h>
+#include <bitcoind/support/allocators/zeroafterfree.h>
 
 #include <algorithm>
 #include <cassert>
@@ -23,8 +23,6 @@
 #include <utility>
 #include <vector>
 
-namespace bsv {
-
 template <typename Stream> class OverrideStream {
     Stream *stream;
 
@@ -37,13 +35,13 @@ public:
 
     template <typename T> OverrideStream<Stream> &operator<<(const T &obj) {
         // Serialize to this stream
-        bsv::Serialize(*this, obj);
+        ::Serialize(*this, obj);
         return (*this);
     }
 
     template <typename T> OverrideStream<Stream> &operator>>(T &obj) {
         // Unserialize from this stream
-        bsv::Unserialize(*this, obj);
+        ::Unserialize(*this, obj);
         return (*this);
     }
 
@@ -88,7 +86,7 @@ public:
     CVectorWriter(int nTypeIn, int nVersionIn, std::vector<uint8_t> &vchDataIn,
                   size_t nPosIn, Args &&... args)
         : CVectorWriter(nTypeIn, nVersionIn, vchDataIn, nPosIn) {
-        bsv::SerializeMany(*this, std::forward<Args>(args)...);
+        ::SerializeMany(*this, std::forward<Args>(args)...);
     }
     void write(const char *pch, size_t nSize) {
         assert(nPos <= vchData.size());
@@ -106,7 +104,7 @@ public:
     }
     template <typename T> CVectorWriter &operator<<(const T &obj) {
         // Serialize to this stream
-        bsv::Serialize(*this, obj);
+        ::Serialize(*this, obj);
         return (*this);
     }
     int GetVersion() const { return nVersion; }
@@ -184,7 +182,7 @@ public:
     template <typename... Args>
     CDataStream(int nTypeIn, int nVersionIn, Args &&... args) {
         Init(nTypeIn, nVersionIn);
-        bsv::SerializeMany(*this, std::forward<Args>(args)...);
+        ::SerializeMany(*this, std::forward<Args>(args)...);
     }
 
     void Init(int nTypeIn, int nVersionIn) {
@@ -371,13 +369,13 @@ public:
 
     template <typename T> CDataStream &operator<<(const T &obj) {
         // Serialize to this stream
-        bsv::Serialize(*this, obj);
+        ::Serialize(*this, obj);
         return (*this);
     }
 
     template <typename T> CDataStream &operator>>(T &obj) {
         // Unserialize from this stream
-        bsv::Unserialize(*this, obj);
+        ::Unserialize(*this, obj);
         return (*this);
     }
 
@@ -507,7 +505,7 @@ public:
         if (!file)
             throw std::ios_base::failure(
                 "CAutoFile::operator<<: file handle is nullptr");
-        bsv::Serialize(*this, obj);
+        ::Serialize(*this, obj);
         return (*this);
     }
 
@@ -516,7 +514,7 @@ public:
         if (!file)
             throw std::ios_base::failure(
                 "CAutoFile::operator>>: file handle is nullptr");
-        bsv::Unserialize(*this, obj);
+        ::Unserialize(*this, obj);
         return (*this);
     }
 };
@@ -636,7 +634,7 @@ public:
 
     template <typename T> CBufferedFile &operator>>(T &obj) {
         // Unserialize from this stream
-        bsv::Unserialize(*this, obj);
+        ::Unserialize(*this, obj);
         return (*this);
     }
 
@@ -980,7 +978,4 @@ private:
     size_t mConsumed = 0u;
 };
 
-}
-
-#endif // BSV_STREAMS_H
-
+#endif // BITCOIN_STREAMS_H

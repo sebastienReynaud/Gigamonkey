@@ -5,14 +5,12 @@
 
 #include <sv/utilstrencodings.h>
 
-#include <tinyformat.h>
+#include <sv/tinyformat.h>
 
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-
-namespace bsv {
 
 static const std::string CHARS_ALPHA_NUM =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -734,6 +732,4 @@ bool ParseFixedPoint(const std::string &val, int decimals,
     if (amount_out) *amount_out = mantissa;
 
     return true;
-}
-
 }

@@ -4,7 +4,8 @@
 // Distributed under the Open BSV software license, see the accompanying file
 // LICENSE.
 
-#pragma once
+#ifndef SV_SCRIPT_SCRIPT_NUM
+#define SV_SCRIPT_SCRIPT_NUM
 
 #include <cassert>
 #include <iosfwd>
@@ -14,8 +15,6 @@
 
 #include <sv/span.h>
 #include <sv/big_int.h>
-
-namespace bsv {
 
 class scriptnum_overflow_error : public std::overflow_error
 {
@@ -180,4 +179,4 @@ inline CScriptNum operator&(CScriptNum a, int64_t b)
 
 std::ostream& operator<<(std::ostream&, const CScriptNum&);
 
-}
+#endif 

@@ -6,8 +6,6 @@
 
 #include <cstdint>
 
-namespace bsv {
-
 /**
  * Configuration interface that contains limits used when evaluating scripts.
  * Class must be defined outside config.h as it is used by a dynamic library
@@ -25,7 +23,5 @@ public:
 protected:
     ~CScriptConfig() = default;
 };
-
-}
 
 #endif

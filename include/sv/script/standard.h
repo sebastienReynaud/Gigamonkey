@@ -13,8 +13,6 @@
 
 #include <cstdint>
 
-namespace bsv {
-
 static const bool DEFAULT_ACCEPT_DATACARRIER = true;
 
 class CKeyID;
@@ -98,8 +96,6 @@ bool ExtractDestinations(const CScript &scriptPubKey, bool isGenesisEnabled, txn
 CScript GetScriptForDestination(const CTxDestination &dest);
 CScript GetScriptForRawPubKey(const CPubKey &pubkey);
 CScript GetScriptForMultisig(int nRequired, const std::vector<CPubKey> &keys);
-
-}
 
 #endif // BSV_SCRIPT_STANDARD_H
 

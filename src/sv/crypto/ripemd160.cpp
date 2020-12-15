@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-namespace bsv {
+namespace bitcoind {
 
 // Internal implementation code.
 namespace {

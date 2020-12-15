@@ -2,14 +2,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BSV_HTTPSERVER_H
-#define BSV_HTTPSERVER_H
+#ifndef BITCOIN_HTTPSERVER_H
+#define BITCOIN_HTTPSERVER_H
 
 #include <cstdint>
 #include <functional>
 #include <string>
-
-namespace bsv {
 
 static const int DEFAULT_HTTP_THREADS = 4;
 static const int DEFAULT_HTTP_WORKQUEUE = 16;
@@ -155,7 +153,4 @@ private:
     struct event *ev;
 };
 
-}
-
-#endif // SV_HTTPSERVER_H
-
+#endif // BITCOIN_HTTPSERVER_H

@@ -3,8 +3,8 @@
 // Copyright (c) 2019-2020 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_POLICY_POLICY_H
-#define BSV_POLICY_POLICY_H
+#ifndef BITCOIN_POLICY_POLICY_H
+#define BITCOIN_POLICY_POLICY_H
 
 #include <sv/consensus/consensus.h>
 #include <sv/script/interpreter.h>
@@ -12,8 +12,6 @@
 
 #include <optional>
 #include <string>
-
-namespace bsv {
 
 class Config;
 class CCoinsViewCache;
@@ -203,7 +201,4 @@ std::optional<bool> AreInputsStandard(
 
 extern CFeeRate dustRelayFee;
 
-}
-
-#endif // BSV_POLICY_POLICY_H
-
+#endif // BITCOIN_POLICY_POLICY_H

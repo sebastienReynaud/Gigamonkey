@@ -7,7 +7,7 @@
 #ifndef GIGAMONKEY_SCRIPT_SCRIPT
 #define GIGAMONKEY_SCRIPT_SCRIPT
 
-#include <sv/script/script.h>
+#include <sv/script/opcodes.h>
 #include <sv/script/script_error.h>
 
 #include <boost/endian/conversion.hpp>
@@ -18,14 +18,14 @@
 namespace Gigamonkey::Bitcoin { 
     
     struct evaluated {
-        bsv::ScriptError Error;
+        ScriptError Error;
         bool Return;
         
-        evaluated() : Error{bsv::SCRIPT_ERR_OK}, Return{false} {}
-        evaluated(bsv::ScriptError err) : Error{err}, Return{false} {}
+        evaluated() : Error{SCRIPT_ERR_OK}, Return{false} {}
+        evaluated(ScriptError err) : Error{err}, Return{false} {}
         
         bool valid() const {
-            return Error == bsv::SCRIPT_ERR_OK;
+            return Error == SCRIPT_ERR_OK;
         }
         
         bool operator==(const evaluated e) const {
@@ -44,6 +44,9 @@ namespace Gigamonkey::Bitcoin {
     evaluated evaluate_script(const script& unlock, const script& lock, const input_index& tx);
     
     using op = opcodetype;
+    
+    // push value
+    const op OP_0 = op(0x00);
     
     const op OP_PUSHSIZE1 = op(0x01);
     const op OP_PUSHSIZE2 = op(0x02);
@@ -127,6 +130,138 @@ namespace Gigamonkey::Bitcoin {
     const op OP_PUSHSIZE73 = op(0x49);
     const op OP_PUSHSIZE74 = op(0x4a);
     const op OP_PUSHSIZE75 = op(0x4b);
+    
+    const op OP_FALSE = op(OP_0);
+    const op OP_PUSHDATA1 = op(0x4c);
+    const op OP_PUSHDATA2 = op(0x4d);
+    const op OP_PUSHDATA4 = op(0x4e);
+    const op OP_1NEGATE = op(0x4f);
+    const op OP_RESERVED = op(0x50);
+    const op OP_1 = op(0x51);
+    const op OP_TRUE = op(OP_1);
+    const op OP_2 = op(0x52);
+    const op OP_3 = op(0x53);
+    const op OP_4 = op(0x54);
+    const op OP_5 = op(0x55);
+    const op OP_6 = op(0x56);
+    const op OP_7 = op(0x57);
+    const op OP_8 = op(0x58);
+    const op OP_9 = op(0x59);
+    const op OP_10 = op(0x5a);
+    const op OP_11 = op(0x5b);
+    const op OP_12 = op(0x5c);
+    const op OP_13 = op(0x5d);
+    const op OP_14 = op(0x5e);
+    const op OP_15 = op(0x5f);
+    const op OP_16 = op(0x60);
+
+    // control
+    const op OP_NOP = op(0x61);
+    const op OP_VER = op(0x62);
+    const op OP_IF = op(0x63);
+    const op OP_NOTIF = op(0x64);
+    const op OP_VERIF = op(0x65);
+    const op OP_VERNOTIF = op(0x66);
+    const op OP_ELSE = op(0x67);
+    const op OP_ENDIF = op(0x68);
+    const op OP_VERIFY = op(0x69);
+    const op OP_RETURN = op(0x6a);
+
+    // stack ops
+    const op OP_TOALTSTACK = op(0x6b);
+    const op OP_FROMALTSTACK = op(0x6c);
+    const op OP_2DROP = op(0x6d);
+    const op OP_2DUP = op(0x6e);
+    const op OP_3DUP = op(0x6f);
+    const op OP_2OVER = op(0x70);
+    const op OP_2ROT = op(0x71);
+    const op OP_2SWAP = op(0x72);
+    const op OP_IFDUP = op(0x73);
+    const op OP_DEPTH = op(0x74);
+    const op OP_DROP = op(0x75);
+    const op OP_DUP = op(0x76);
+    const op OP_NIP = op(0x77);
+    const op OP_OVER = op(0x78);
+    const op OP_PICK = op(0x79);
+    const op OP_ROLL = op(0x7a);
+    const op OP_ROT = op(0x7b);
+    const op OP_SWAP = op(0x7c);
+    const op OP_TUCK = op(0x7d);
+
+    // splice ops
+    const op OP_CAT = op(0x7e);
+    const op OP_SPLIT = op(0x7f);   // after monolith upgrade (May 2018)
+    const op OP_NUM2BIN = op(0x80); // after monolith upgrade (May 2018)
+    const op OP_BIN2NUM = op(0x81); // after monolith upgrade (May 2018)
+    const op OP_SIZE = op(0x82);
+
+    // bit logic
+    const op OP_INVERT = op(0x83);
+    const op OP_AND = op(0x84);
+    const op OP_OR = op(0x85);
+    const op OP_XOR = op(0x86);
+    const op OP_EQUAL = op(0x87);
+    const op OP_EQUALVERIFY = op(0x88);
+    const op OP_RESERVED1 = op(0x89);
+    const op OP_RESERVED2 = op(0x8a);
+
+    // numeric
+    const op OP_1ADD = op(0x8b);
+    const op OP_1SUB = op(0x8c);
+    const op OP_2MUL = op(0x8d);
+    const op OP_2DIV = op(0x8e);
+    const op OP_NEGATE = op(0x8f);
+    const op OP_ABS = op(0x90);
+    const op OP_NOT = op(0x91);
+    const op OP_0NOTEQUAL = op(0x92);
+
+    const op OP_ADD = op(0x93);
+    const op OP_SUB = op(0x94);
+    const op OP_MUL = op(0x95);
+    const op OP_DIV = op(0x96);
+    const op OP_MOD = op(0x97);
+    const op OP_LSHIFT = op(0x98);
+    const op OP_RSHIFT = op(0x99);
+
+    const op OP_BOOLAND = op(0x9a);
+    const op OP_BOOLOR = op(0x9b);
+    const op OP_NUMEQUAL = op(0x9c);
+    const op OP_NUMEQUALVERIFY = op(0x9d);
+    const op OP_NUMNOTEQUAL = op(0x9e);
+    const op OP_LESSTHAN = op(0x9f);
+    const op OP_GREATERTHAN = op(0xa0);
+    const op OP_LESSTHANOREQUAL = op(0xa1);
+    const op OP_GREATERTHANOREQUAL = op(0xa2);
+    const op OP_MIN = op(0xa3);
+    const op OP_MAX = op(0xa4);
+
+    const op OP_WITHIN = op(0xa5);
+
+    // crypto
+    const op OP_RIPEMD160 = op(0xa6);
+    const op OP_SHA1 = op(0xa7);
+    const op OP_SHA256 = op(0xa8);
+    const op OP_HASH160 = op(0xa9);
+    const op OP_HASH256 = op(0xaa);
+    const op OP_CODESEPARATOR = op(0xab);
+    const op OP_CHECKSIG = op(0xac);
+    const op OP_CHECKSIGVERIFY = op(0xad);
+    const op OP_CHECKMULTISIG = op(0xae);
+    const op OP_CHECKMULTISIGVERIFY = op(0xaf);
+
+    // expansion
+    const op OP_NOP1 = op(0xb0);
+    const op OP_CHECKLOCKTIMEVERIFY = op(0xb1);
+    const op OP_NOP2 = OP_CHECKLOCKTIMEVERIFY;
+    const op OP_CHECKSEQUENCEVERIFY = op(0xb2);
+    const op OP_NOP3 = OP_CHECKSEQUENCEVERIFY;
+    const op OP_NOP4 = op(0xb3);
+    const op OP_NOP5 = op(0xb4);
+    const op OP_NOP6 = op(0xb5);
+    const op OP_NOP7 = op(0xb6);
+    const op OP_NOP8 = op(0xb7);
+    const op OP_NOP9 = op(0xb8);
+    const op OP_NOP10 = op(0xb9);
 
     bool inline is_push(op o) {
         return o <= OP_16 && o != OP_RESERVED;

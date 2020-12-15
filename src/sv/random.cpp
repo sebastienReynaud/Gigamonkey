@@ -3,16 +3,16 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "random.h"
+#include <sv/random.h>
 
-#include "crypto/sha512.h"
-#include "support/cleanse.h"
+#include <bitcoind/crypto/sha512.h>
+#include <bitcoind/support/cleanse.h>
 #ifdef WIN32
-#include "compat.h" // for Windows API
+#include <sv/compat.h> // for Windows API
 #include <wincrypt.h>
 #endif
-#include "util.h"             // for LogPrint()
-#include "utilstrencodings.h" // for GetTime()
+#include <sv/util.h>            // for LogPrint()
+#include <sv/utilstrencodings.h> // for GetTime()
 
 #include <chrono>
 #include <cstdlib>

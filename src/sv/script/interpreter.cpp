@@ -6,9 +6,9 @@
 #include <sv/script/interpreter.h>
 #include <sv/script/script_flags.h>
 
-#include <sv/crypto/ripemd160.h>
-#include <sv/crypto/sha1.h>
-#include <sv/crypto/sha256.h>
+#include <bitcoind/crypto/ripemd160.h>
+#include <bitcoind/crypto/sha1.h>
+#include <bitcoind/crypto/sha256.h>
 #include <sv/primitives/transaction.h>
 #include <sv/pubkey.h>
 #include <sv/script/int_serialization.h>
@@ -18,8 +18,6 @@
 #include <sv/uint256.h>
 #include <sv/consensus/consensus.h>
 #include <sv/script_config.h>
-
-namespace bsv {
 
 namespace {
 
@@ -1740,7 +1738,7 @@ public:
                 nCodeSeparators++;
             }
         }
-        bsv::WriteCompactSize(s, scriptCode.size() - nCodeSeparators);
+        ::WriteCompactSize(s, scriptCode.size() - nCodeSeparators);
         it = itBegin;
         while (scriptCode.GetOp(it, opcode)) {
             if (opcode == OP_CODESEPARATOR) {
@@ -1761,11 +1759,11 @@ public:
             nInput = nIn;
         }
         // Serialize the prevout
-        bsv::Serialize(s, txTo.vin[nInput].prevout);
+        ::Serialize(s, txTo.vin[nInput].prevout);
         // Serialize the script
         if (nInput != nIn) {
             // Blank out other inputs' signatures
-            bsv::Serialize(s, CScript());
+            ::Serialize(s, CScript());
         } else {
             SerializeScriptCode(s);
         }
@@ -1774,9 +1772,9 @@ public:
             (sigHashType.getBaseType() == BaseSigHashType::SINGLE ||
              sigHashType.getBaseType() == BaseSigHashType::NONE)) {
             // let the others update at will
-            bsv::Serialize(s, (int)0);
+            ::Serialize(s, (int)0);
         } else {
-            bsv::Serialize(s, txTo.vin[nInput].nSequence);
+            ::Serialize(s, txTo.vin[nInput].nSequence);
         }
     }
 
@@ -1786,20 +1784,20 @@ public:
         if (sigHashType.getBaseType() == BaseSigHashType::SINGLE &&
             nOutput != nIn) {
             // Do not lock-in the txout payee at other indices as txin
-            bsv::Serialize(s, CTxOut());
+            ::Serialize(s, CTxOut());
         } else {
-            bsv::Serialize(s, txTo.vout[nOutput]);
+            ::Serialize(s, txTo.vout[nOutput]);
         }
     }
 
     /** Serialize txTo */
     template <typename S> void Serialize(S &s) const {
         // Serialize nVersion
-        bsv::Serialize(s, txTo.nVersion);
+        ::Serialize(s, txTo.nVersion);
         // Serialize vin
         unsigned int nInputs =
             sigHashType.hasAnyoneCanPay() ? 1 : txTo.vin.size();
-        bsv::WriteCompactSize(s, nInputs);
+        ::WriteCompactSize(s, nInputs);
         for (unsigned int nInput = 0; nInput < nInputs; nInput++) {
             SerializeInput(s, nInput);
         }
@@ -1810,12 +1808,12 @@ public:
                 : ((sigHashType.getBaseType() == BaseSigHashType::SINGLE)
                        ? nIn + 1
                        : txTo.vout.size());
-        bsv::WriteCompactSize(s, nOutputs);
+        ::WriteCompactSize(s, nOutputs);
         for (unsigned int nOutput = 0; nOutput < nOutputs; nOutput++) {
             SerializeOutput(s, nOutput);
         }
         // Serialize nLockTime
-        bsv::Serialize(s, txTo.nLockTime);
+        ::Serialize(s, txTo.nLockTime);
     }
 };
 
@@ -2143,6 +2141,4 @@ std::optional<bool> VerifyScript(
     }
 
     return set_success(serror);
-}
-
 }

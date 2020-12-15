@@ -5,12 +5,9 @@
 
 #include <sv/primitives/transaction.h>
 
-#include <tinyformat.h>
-
 #include <sv/hash.h>
+#include <sv/tinyformat.h>
 #include <sv/utilstrencodings.h>
-
-namespace bsv {
 
 std::string COutPoint::ToString() const {
     return strprintf("COutPoint(%s, %u)", txid.ToString().substr(0, 10), n);
@@ -113,7 +110,7 @@ unsigned int CTransaction::CalculateModifiedSize(unsigned int nTxSize) const {
 }
 
 unsigned int CTransaction::GetTotalSize() const {
-    return ::bsv::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION);
+    return ::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION);
 }
 
 bool CTransaction::HasP2SHOutput() const {
@@ -135,6 +132,4 @@ std::string CTransaction::ToString() const {
     for (unsigned int i = 0; i < vout.size(); i++)
         str += "    " + vout[i].ToString() + "\n";
     return str;
-}
-
 }

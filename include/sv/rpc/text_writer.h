@@ -1,15 +1,12 @@
 // Copyright (c) 2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_RPC_TEXT_WRITER
-#define BSV_RPC_TEXT_WRITER
+#pragma once
 
 #include <sv/consensus/consensus.h> // For ONE_MEGABYTE
 #include <sv/httpserver.h> // For HTTPRequest
 #include <string>
 #include <fstream>
-
-namespace bsv {
 
 class CTextWriter
 {
@@ -203,7 +200,3 @@ private:
     std::ofstream file;
     std::string error;
 };
-
-}
-
-#endif

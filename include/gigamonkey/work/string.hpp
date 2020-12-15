@@ -31,7 +31,7 @@ namespace Gigamonkey::work {
         }
         
         explicit string(const slice<80>& x) : string(read(x)) {}
-        explicit string(const bsv::CBlockHeader&);
+        explicit string(const CBlockHeader&);
         
         uint<80> write() const {
             return operator Bitcoin::header().write();
@@ -54,7 +54,7 @@ namespace Gigamonkey::work {
             return Target.difficulty();
         }
         
-        explicit operator bsv::CBlockHeader() const;
+        explicit operator CBlockHeader() const;
         
         explicit operator Bitcoin::header() const {
             return {Category, digest256{Digest}, digest256{MerkleRoot}, Timestamp, Target, Nonce};

@@ -9,7 +9,7 @@
 #include <cassert>
 #include <cstring>
 
-namespace bsv {
+namespace bitcoind {
 
 #if defined(__x86_64__) || defined(__amd64__)
 #if defined(USE_ASM)

@@ -3,8 +3,10 @@
 // Copyright (c) 2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef SV_SERIALIZE_H
-#define SV_SERIALIZE_H
+#ifndef BITCOIN_SERIALIZE_H
+#define BITCOIN_SERIALIZE_H
+
+#include <bitcoind/compat/endian.h>
 
 #include <iostream>
 #include <string>
@@ -23,8 +25,6 @@
 #include <vector>
 
 #include <sv/prevector.h>
-
-namespace bsv {
 
 static const uint64_t MAX_SIZE = std::numeric_limits<uint32_t>::max();
 
@@ -146,9 +146,9 @@ enum {
     SER_GETHASH = (1 << 2),
 };
 
-#define READWRITE(obj) (::bsv::SerReadWrite(s, (obj), ser_action))
-#define READWRITECOMPACTSIZE(obj) (::bsv::SerReadWriteCompactSize(s, (obj), ser_action))
-#define READWRITEMANY(...) (::bsv::SerReadWriteMany(s, ser_action, __VA_ARGS__))
+#define READWRITE(obj) (::SerReadWrite(s, (obj), ser_action))
+#define READWRITECOMPACTSIZE(obj) (::SerReadWriteCompactSize(s, (obj), ser_action))
+#define READWRITEMANY(...) (::SerReadWriteMany(s, ser_action, __VA_ARGS__))
 
 /**
  * Implement three methods for serializable objects. These are actually wrappers
@@ -633,7 +633,7 @@ template <typename Stream, unsigned int N, typename T, typename V>
 void Serialize_impl(Stream &os, const prevector<N, T> &v, const V &) {
     WriteCompactSize(os, v.size());
     for (const T &i : v) {
-        bsv::Serialize(os, i);
+        ::Serialize(os, i);
     }
 }
 
@@ -702,7 +702,7 @@ template <typename Stream, typename T, typename A, typename V>
 void Serialize_impl(Stream &os, const std::vector<T, A> &v, const V &) {
     WriteCompactSize(os, v.size());
     for (const T &i : v) {
-        bsv::Serialize(os, i);
+        ::Serialize(os, i);
     }
 }
 
@@ -854,12 +854,12 @@ struct CSerActionUnserialize {
 template <typename Stream, typename T>
 inline void SerReadWrite(Stream &s, const T &obj,
                          CSerActionSerialize ser_action) {
-    bsv::Serialize(s, obj);
+    ::Serialize(s, obj);
 }
 
 template <typename Stream, typename T>
 inline void SerReadWrite(Stream &s, T &obj, CSerActionUnserialize ser_action) {
-    bsv::Unserialize(s, obj);
+    ::Unserialize(s, obj);
 }
 
 /**
@@ -869,12 +869,12 @@ inline void SerReadWrite(Stream &s, T &obj, CSerActionUnserialize ser_action) {
 template <typename Stream>
 inline void SerReadWriteCompactSize(Stream &s, const uint64_t &obj,
                          CSerActionSerialize ser_action) {
-    bsv::WriteCompactSize(s, obj);
+    ::WriteCompactSize(s, obj);
 }
 
 template <typename Stream>
 inline void SerReadWriteCompactSize(Stream &s, uint64_t &obj, CSerActionUnserialize ser_action) {
-    obj = bsv::ReadCompactSize(s);
+    obj = ::ReadCompactSize(s);
 }
 
 /**
@@ -906,7 +906,7 @@ public:
     void seek(size_t _nSize) { this->nSize += _nSize; }
 
     template <typename T> CSizeComputer &operator<<(const T &obj) {
-        bsv::Serialize(*this, obj);
+        ::Serialize(*this, obj);
         return (*this);
     }
 
@@ -920,38 +920,38 @@ template <typename Stream> void SerializeMany(Stream &s) {}
 
 template <typename Stream, typename Arg>
 void SerializeMany(Stream &s, Arg &&arg) {
-    bsv::Serialize(s, std::forward<Arg>(arg));
+    ::Serialize(s, std::forward<Arg>(arg));
 }
 
 template <typename Stream, typename Arg, typename... Args>
 void SerializeMany(Stream &s, Arg &&arg, Args &&... args) {
-    bsv::Serialize(s, std::forward<Arg>(arg));
-    bsv::SerializeMany(s, std::forward<Args>(args)...);
+    ::Serialize(s, std::forward<Arg>(arg));
+    ::SerializeMany(s, std::forward<Args>(args)...);
 }
 
 template <typename Stream> inline void UnserializeMany(Stream &s) {}
 
 template <typename Stream, typename Arg>
 inline void UnserializeMany(Stream &s, Arg &arg) {
-    bsv::Unserialize(s, arg);
+    ::Unserialize(s, arg);
 }
 
 template <typename Stream, typename Arg, typename... Args>
 inline void UnserializeMany(Stream &s, Arg &arg, Args &... args) {
-    bsv::Unserialize(s, arg);
-    bsv::UnserializeMany(s, args...);
+    ::Unserialize(s, arg);
+    ::UnserializeMany(s, args...);
 }
 
 template <typename Stream, typename... Args>
 inline void SerReadWriteMany(Stream &s, CSerActionSerialize ser_action,
                              Args &&... args) {
-    bsv::SerializeMany(s, std::forward<Args>(args)...);
+    ::SerializeMany(s, std::forward<Args>(args)...);
 }
 
 template <typename Stream, typename... Args>
 inline void SerReadWriteMany(Stream &s, CSerActionUnserialize ser_action,
                              Args &... args) {
-    bsv::UnserializeMany(s, args...);
+    ::UnserializeMany(s, args...);
 }
 
 template <typename I> inline void WriteVarInt(CSizeComputer &s, I n) {
@@ -972,7 +972,4 @@ size_t GetSerializeSize(const S &s, const T &t) {
     return (CSizeComputer(s.GetType(), s.GetVersion()) << t).size();
 }
 
-}
-
-#endif // SV_SERIALIZE_H
-
+#endif // BITCOIN_SERIALIZE_H

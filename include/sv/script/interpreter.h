@@ -3,8 +3,8 @@
 // Copyright (c) 2018-2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_SCRIPT_INTERPRETER_H
-#define BSV_SCRIPT_INTERPRETER_H
+#ifndef BITCOIN_SCRIPT_INTERPRETER_H
+#define BITCOIN_SCRIPT_INTERPRETER_H
 
 #include <sv/primitives/transaction.h>
 #include <sv/script/script_flags.h>
@@ -16,8 +16,6 @@
 #include <optional>
 #include <string>
 #include <vector>
-
-namespace bsv {
 
 class CPubKey;
 class CScript;
@@ -134,7 +132,4 @@ std::optional<bool> VerifyScript(
     const BaseSignatureChecker& checker,
     ScriptError* serror = nullptr);
 
-}
-
-#endif // BSV_SCRIPT_INTERPRETER_H
-
+#endif // BITCOIN_SCRIPT_INTERPRETER_H

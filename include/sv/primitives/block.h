@@ -3,14 +3,12 @@
 // Copyright (c) 2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_PRIMITIVES_BLOCK_H
-#define BSV_PRIMITIVES_BLOCK_H
+#ifndef BITCOIN_PRIMITIVES_BLOCK_H
+#define BITCOIN_PRIMITIVES_BLOCK_H
 
 #include <sv/primitives/transaction.h>
 #include <sv/serialize.h>
 #include <sv/uint256.h>
-
-namespace bsv {
 
 /**
  * Nodes collect new transactions into a block, hash them into a hash tree, and
@@ -144,7 +142,4 @@ struct CBlockLocator {
     bool IsNull() const { return vHave.empty(); }
 };
 
-}
-
-#endif // BSV_PRIMITIVES_BLOCK_H
-
+#endif // BITCOIN_PRIMITIVES_BLOCK_H

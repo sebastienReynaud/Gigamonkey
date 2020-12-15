@@ -2,15 +2,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BSV_SCRIPT_HASH_TYPE_H
-#define BSV_SCRIPT_HASH_TYPE_H
+#ifndef BITCOIN_SCRIPT_HASH_TYPE_H
+#define BITCOIN_SCRIPT_HASH_TYPE_H
 
 #include <sv/serialize.h>
 
 #include <cstdint>
 #include <stdexcept>
-
-namespace bsv {
 
 /** Signature hash types/flags */
 enum {
@@ -85,11 +83,8 @@ public:
     uint32_t getRawSigHashType() const { return sigHash; }
 
     template <typename Stream> void Serialize(Stream &s) const {
-        bsv::Serialize(s, getRawSigHashType());
+        ::Serialize(s, getRawSigHashType());
     }
 };
 
-}
-
-#endif // BSV_SCRIPT_HASH_TYPE_H
-
+#endif // BITCOIN_SCRIPT_HASH_TYPE_H

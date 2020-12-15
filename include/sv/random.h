@@ -3,16 +3,14 @@
 // Copyright (c) 2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_RANDOM_H
-#define BSV_RANDOM_H
+#ifndef BITCOIN_RANDOM_H
+#define BITCOIN_RANDOM_H
 
-#include <sv/crypto/chacha20.h>
-#include <sv/crypto/common.h>
+#include <bitcoind/crypto/chacha20.h>
+#include <bitcoind/crypto/common.h>
 #include <sv/uint256.h>
 
 #include <cstdint>
-
-namespace bsv {
 
 /* Seed OpenSSL PRNG with additional entropy data */
 void RandAddSeed();
@@ -150,6 +148,4 @@ bool Random_SanityCheck();
 /** Initialize the RNG. */
 void RandomInit();
 
-}
-
-#endif // BSV_RANDOM_H
+#endif // BITCOIN_RANDOM_H

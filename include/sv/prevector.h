@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef _BSV_PREVECTOR_H_
-#define _BSV_PREVECTOR_H_
+#ifndef _BITCOIN_PREVECTOR_H_
+#define _BITCOIN_PREVECTOR_H_
 
 #include <cassert>
 #include <cstdint>
@@ -11,8 +11,6 @@
 #include <cstring>
 
 #include <iterator>
-
-namespace bsv {
 
 /**
  * Implements a drop-in replacement for std::vector<T> which stores up to N
@@ -575,7 +573,4 @@ public:
     const value_type *data() const { return item_ptr(0); }
 };
 
-}
-
 #endif
-

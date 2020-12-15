@@ -111,17 +111,31 @@ endif()
 add_subdirectory("${PROJECT_SOURCE_DIR}/extern/data/")
 
 add_library(gigamonkey STATIC 
-    src/sv/support/cleanse.cpp
-    src/sv/crypto/sha1.cpp
-    src/sv/crypto/sha256.cpp
-    src/sv/crypto/ripemd160.cpp
+    extern/data/src/bitcoind/support/cleanse.cpp
+    extern/data/src/bitcoind/crypto/sha1.cpp
+    extern/data/src/bitcoind/crypto/sha256.cpp
+    extern/data/src/bitcoind/crypto/ripemd160.cpp
+    extern/data/src/bitcoind/crypto/sha512.cpp
+    extern/data/src/bitcoind/crypto/hmac_sha512.cpp
+    
+    src/sv/secp256k1/src/modules/recovery/main_impl.h
+    src/sv/script/opcodes.cpp
+    src/sv/script/script_error.cpp
+    src/sv/utiltime.cpp
     src/sv/utilstrencodings.cpp
+    src/sv/random.cpp
+    
+    src/sv/hash.cpp
+    src/sv/big_int.cpp
+    src/sv/uint256.cpp
     src/sv/arith_uint256.cpp
+    src/sv/pubkey.cpp
     src/sv/primitives/transaction.cpp
     
+    src/sv/script/limitedstack.cpp
+    src/sv/script/script.cpp
+    src/sv/script/script_num.cpp
     src/sv/script/interpreter.cpp
-	src/sv/big_int.cpp
-    #src/sv/uint256.cpp
 
     src/gigamonkey/hash.cpp
     src/gigamonkey/signature.cpp
@@ -147,7 +161,7 @@ add_library(gigamonkey STATIC
     src/gigamonkey/boost/boost.cpp
 )
 
-target_link_libraries(gigamonkey PUBLIC data common util ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARIES} ${Boost_LIBRARIES} ${GMPXX_LIBRARY} ${GMP_LIBRARY} nlohmann_json::nlohmann_json )
+target_link_libraries(gigamonkey PUBLIC data ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARIES} ${Boost_LIBRARIES} ${GMPXX_LIBRARY} ${GMP_LIBRARY} nlohmann_json::nlohmann_json )
 
 target_include_directories(gigamonkey PUBLIC include)
 

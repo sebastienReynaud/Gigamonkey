@@ -3,19 +3,17 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BSV_HASH_H
-#define BSV_HASH_H
+#ifndef BITCOIN_HASH_H
+#define BITCOIN_HASH_H
 
-#include <sv/crypto/ripemd160.h>
-#include <sv/crypto/sha256.h>
+#include <bitcoind/crypto/ripemd160.h>
+#include <bitcoind/crypto/sha256.h>
 #include <sv/prevector.h>
 #include <sv/serialize.h>
 #include <sv/uint256.h>
 #include <sv/version.h>
 
 #include <vector>
-
-namespace bsv {
 
 typedef uint256 ChainCode;
 
@@ -162,7 +160,7 @@ public:
 
     template <typename T> CHashWriter &operator<<(const T &obj) {
         // Serialize to this stream
-        bsv::Serialize(*this, obj);
+        ::Serialize(*this, obj);
         return (*this);
     }
 };
@@ -195,7 +193,7 @@ public:
 
     template <typename T> CHashVerifier<Source> &operator>>(T &obj) {
         // Unserialize from this stream
-        bsv::Unserialize(*this, obj);
+        ::Unserialize(*this, obj);
         return (*this);
     }
 };
@@ -253,7 +251,4 @@ uint64_t SipHashUint256(uint64_t k0, uint64_t k1, const uint256 &val);
 uint64_t SipHashUint256Extra(uint64_t k0, uint64_t k1, const uint256 &val,
                              uint32_t extra);
 
-}
-
-#endif // BSV_HASH_H
-
+#endif // BITCOIN_HASH_H

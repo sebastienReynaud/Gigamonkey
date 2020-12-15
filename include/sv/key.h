@@ -3,18 +3,16 @@
 // Copyright (c) 2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_KEY_H
-#define BSV_KEY_H
+#ifndef BITCOIN_KEY_H
+#define BITCOIN_KEY_H
 
 #include <sv/pubkey.h>
 #include <sv/serialize.h>
-#include <sv/support/allocators/secure.h>
+#include <bitcoind/support/allocators/secure.h>
 #include <sv/uint256.h>
 
 #include <stdexcept>
 #include <vector>
-
-namespace bsv {
 
 /**
  * secp256k1:
@@ -164,13 +162,13 @@ struct CExtKey {
     void SetMaster(const uint8_t *seed, unsigned int nSeedLen);
     template <typename Stream> void Serialize(Stream &s) const {
         unsigned int len = BIP32_EXTKEY_SIZE;
-        bsv::WriteCompactSize(s, len);
+        ::WriteCompactSize(s, len);
         uint8_t code[BIP32_EXTKEY_SIZE];
         Encode(code);
         s.write((const char *)&code[0], len);
     }
     template <typename Stream> void Unserialize(Stream &s) {
-        unsigned int len = bsv::ReadCompactSize(s);
+        unsigned int len = ::ReadCompactSize(s);
         uint8_t code[BIP32_EXTKEY_SIZE];
         if (len != BIP32_EXTKEY_SIZE)
             throw std::runtime_error("Invalid extended key size\n");
@@ -192,6 +190,4 @@ void ECC_Stop(void);
 /** Check that required EC support is available at runtime. */
 bool ECC_InitSanityCheck(void);
 
-}
-
-#endif // BSV_KEY_H
+#endif // BITCOIN_KEY_H

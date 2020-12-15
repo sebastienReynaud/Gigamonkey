@@ -3,12 +3,10 @@
 // Copyright (c) 2018-2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef SV_CONSENSUS_CONSENSUS_H
-#define SV_CONSENSUS_CONSENSUS_H
+#ifndef BITCOIN_CONSENSUS_CONSENSUS_H
+#define BITCOIN_CONSENSUS_CONSENSUS_H
 
 #include <cstdint>
-
-namespace bsv {
 
 /** 1KB */
 static const uint64_t ONE_KILOBYTE = 1000;
@@ -88,7 +86,4 @@ enum {
     LOCKTIME_MEDIAN_TIME_PAST = (1 << 1),
 };
 
-}
-
-#endif // SV_CONSENSUS_CONSENSUS_H
-
+#endif // BITCOIN_CONSENSUS_CONSENSUS_H

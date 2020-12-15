@@ -2,8 +2,7 @@
 // Distributed under the Open BSV software license, see the accompanying file
 // LICENSE.
 
-#ifndef SV_INT_SERIALIZATION
-#define SZ_INT_SERIALIZATION
+#pragma once
 
 #include <cassert>
 #include <cstdint>
@@ -12,7 +11,7 @@
 
 #include <sv/span.h>
 
-namespace sv
+namespace bsv
 {
     inline auto abs(const int64_t value)
     {
@@ -187,4 +186,3 @@ namespace sv
     }
 }
 
-#endif 

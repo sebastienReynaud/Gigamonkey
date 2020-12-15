@@ -1,8 +1,8 @@
 // Copyright (c) 2020 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file
 // LICENSE.
-#ifndef BSV_SCRIPT_OPCODES
-#define BSV_SCRIPT_OPCODES
+#ifndef SV_SCRIPT_OPCODES
+#define SV_SCRIPT_OPCODES
 
 #include <iosfwd>
 

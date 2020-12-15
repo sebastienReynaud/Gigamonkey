@@ -2,13 +2,12 @@
 // Distributed under the Open BSV software license, see the accompanying file
 // LICENSE.
 
-#ifndef BSV_SPAN
-#define BSV_SPAN
+#pragma once
 
 #include <cstddef>
 
-namespace bsv {
-
+namespace bsv
+{
     // Simplified version of std::span (C++20)
     // Replace with std::span when available
     template <typename ElementType>
@@ -53,7 +52,5 @@ namespace bsv {
             return span{p_ + size() - count, count};
         };
     };
-
 }
 
-#endif

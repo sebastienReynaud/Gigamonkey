@@ -12,7 +12,7 @@
 
 namespace Gigamonkey::Bitcoin {
     
-    struct script_config : bsv::CScriptConfig {
+    struct script_config : CScriptConfig {
         uint64_t GetMaxOpsPerScript(bool isGenesisEnabled, bool isConsensus) const {
             throw 0;
         }
@@ -38,15 +38,15 @@ namespace Gigamonkey::Bitcoin {
         }
     };
     
-    evaluated evaluate_script(const script& unlock, const script& lock, const bsv::BaseSignatureChecker& checker) {
+    evaluated evaluate_script(const script& unlock, const script& lock, const BaseSignatureChecker& checker) {
         evaluated Response;
-        std::optional<bool> response = bsv::VerifyScript(
+        std::optional<bool> response = VerifyScript(
             script_config{}, // Config. 
             false, // true for consensus rules, false for policy rules.  
-            bsv::task::CCancellationSource::Make()->GetToken(), 
-            bsv::CScript(unlock.begin(), unlock.end()), 
-            bsv::CScript(lock.begin(), lock.end()), 
-            bsv::StandardScriptVerifyFlags(true, true), // Flags. I don't know what these should be. 
+            task::CCancellationSource::Make()->GetToken(), 
+            CScript(unlock.begin(), unlock.end()), 
+            CScript(lock.begin(), lock.end()), 
+            StandardScriptVerifyFlags(true, true), // Flags. I don't know what these should be. 
             checker, 
             &Response.Error);
         if (response.has_value()) {
@@ -55,13 +55,13 @@ namespace Gigamonkey::Bitcoin {
         return Response;
     }
     
-    class DummySignatureChecker : public bsv::BaseSignatureChecker {
+    class DummySignatureChecker : public BaseSignatureChecker {
     public:
         DummySignatureChecker() {}
 
         bool CheckSig(const std::vector<uint8_t> &scriptSig,
                     const std::vector<uint8_t> &vchPubKey,
-                    const bsv::CScript &scriptCode, bool enabledSighashForkid) const override {
+                    const CScript &scriptCode, bool enabledSighashForkid) const override {
             return true;
         }
     };
@@ -73,9 +73,9 @@ namespace Gigamonkey::Bitcoin {
     evaluated evaluate_script(const script& unlock, const script& lock, const input_index& transaction) {
         // transaction needs to be made into some stream but I don't know what that is. It's a
         // template parameter in this constructor. 
-        bsv::CDataStream stream{static_cast<const std::vector<uint8_t>&>(transaction.Transaction), bsv::SER_NETWORK, bsv::PROTOCOL_VERSION};
-        bsv::CTransaction tx{bsv::deserialize, stream}; 
-        return evaluate_script(lock, unlock, bsv::TransactionSignatureChecker(&tx, transaction.Index, bsv::Amount(int64(transaction.Output.Value))));
+        CDataStream stream{static_cast<const std::vector<uint8_t>&>(transaction.Transaction), SER_NETWORK, PROTOCOL_VERSION};
+        CTransaction tx{deserialize, stream}; 
+        return evaluate_script(lock, unlock, TransactionSignatureChecker(&tx, transaction.Index, Amount(int64(transaction.Output.Value))));
     }
 
 }

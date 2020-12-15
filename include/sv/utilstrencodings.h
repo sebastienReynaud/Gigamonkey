@@ -6,21 +6,19 @@
 /**
  * Utilities for converting data from/to strings.
  */
-#ifndef BSV_UTILSTRENCODINGS_H
-#define BSV_UTILSTRENCODINGS_H
+#ifndef BITCOIN_UTILSTRENCODINGS_H
+#define BITCOIN_UTILSTRENCODINGS_H
 
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <sv/rpc/text_writer.h>
+#include "rpc/text_writer.h"
 
 #define BEGIN(a) ((char *)&(a))
 #define END(a) ((char *)&((&(a))[1]))
 #define UBEGIN(a) ((uint8_t *)&(a))
 #define UEND(a) ((uint8_t *)&((&(a))[1]))
 #define ARRAYLEN(array) (sizeof(array) / sizeof((array)[0]))
-
-namespace bsv {
 
 /** Used by SanitizeString() */
 enum SafeChars {
@@ -212,7 +210,4 @@ bool ConvertBits(O &out, I it, I end) {
     return true;
 }
 
-}
-
-#endif // BSV_UTILSTRENCODINGS_H
-
+#endif // BITCOIN_UTILSTRENCODINGS_H

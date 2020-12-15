@@ -3,11 +3,11 @@
 // Copyright (c) 2018-2019 Bitcoin Association
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 
-#ifndef BSV_SCRIPT_SCRIPT_H
-#define BSV_SCRIPT_SCRIPT_H
+#ifndef BITCOIN_SCRIPT_SCRIPT_H
+#define BITCOIN_SCRIPT_SCRIPT_H
 
 #include <sv/consensus/consensus.h>
-#include <sv/crypto/common.h>
+#include <bitcoind/crypto/common.h>
 #include <sv/prevector.h>
 #include <sv/serialize.h>
 #include <sv/span.h>
@@ -21,8 +21,6 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-namespace bsv {
 
 // Maximum number of bytes pushable to the stack -- replaced with DEFAULT_STACK_MEMORY_USAGE after Genesis
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE_BEFORE_GENESIS = 520;
@@ -42,7 +40,10 @@ class CScriptNum;
 
 typedef prevector<28, uint8_t> CScriptBase;
 
-class instruction_iterator;
+namespace bsv
+{
+    class instruction_iterator;
+}
 
 /** Serialized script, used inside transaction inputs and outputs */
 class CScript : public CScriptBase {
@@ -124,8 +125,8 @@ public:
         return *this;
     }
 
-    instruction_iterator begin_instructions() const;
-    instruction_iterator end_instructions() const;
+    bsv::instruction_iterator begin_instructions() const;
+    bsv::instruction_iterator end_instructions() const;
 
     bool GetOp(iterator &pc, opcodetype &opcodeRet,
                std::vector<uint8_t> &vchRet) {
@@ -303,9 +304,9 @@ public:
 std::ostream &operator<<(std::ostream &, const CScript &);
 std::string to_string(const CScript&);
 
-bool IsP2SH(span<const uint8_t>);
+bool IsP2SH(bsv::span<const uint8_t>);
 
-size_t CountOp(span<const uint8_t>, opcodetype);
+size_t CountOp(bsv::span<const uint8_t>, opcodetype);
 
 struct CScriptWitness {
     // Note that this encodes the data elements being pushed, rather than
@@ -333,7 +334,4 @@ public:
     virtual ~CReserveScript() {}
 };
 
-}
-
-#endif // SV_SCRIPT_SCRIPT_H
-
+#endif // BITCOIN_SCRIPT_SCRIPT_H
